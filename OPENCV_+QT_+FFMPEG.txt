@@ -1,0 +1,4 @@
+opencv2.4.9
+ffmpeg(见附录)
+
+dir::../第三方库/opencv-qt-ffmpeg-complete.zip

@@ -1,0 +1,26 @@
+export TSLIB_TSDEVICE=/dev/input/event1
+export TSLIB_CALIBFILE=/etc/pointercal 
+export TSLIB_CONFFILE=/etc/ts.conf
+export TSLIB_PLUGINDIR=/usr/lib/ts
+export TSLIB_CONSOLEDEVICE=none
+export TSLIB_FBDEVICE=/dev/fb0
+export LD_PRELOAD=/usr/lib/libts.so
+
+
+export QTDIR=/opt/Qt-Lib
+export QT_QPA_PLATFORM_PLUGIN_PATH=$QTDIR/plugins  
+export QT_QPA_PLATFORM=linuxfb:tty=/dev/fb0  
+export QT_QPA_FONTDIR=$QTDIR/lib/fonts
+export QT_QPA_GENERIC_PLUGINS=tslib:$TSLIB_TSDEVICE
+export QWS_DISPLAY=LinuxFb:/dev/fb0
+export QWS_SIZE=1024x600
+export QT_QWS_FONTDIR=$QTDIR/lib/fonts
+export LD_LIBRARY_PATH=$QTDIR/lib:$QT_QPA_PLATFORM_PLUGIN_PATH/platforms:$QT_QPA_FONTDIR:/usr/lib:/opt/Opencv-Lib/lib:$QT_QPA_PLATFORM_PLUGIN_PATH/mediaservice
+umask 022
+export OPENCV_LIB=/opt/Opencv-Lib/lib
+export OPENCV_INCLUDE=/opt/Opencv-Lib/include
+export OPENCV_BIN=/opt/Opencv-Lib/bin
+export OPENCV_SHARE=/opt/Opencv-Lib/share
+
+export QT_QPA_FB_TSLIB=1
+export qt_opencv_start=/home/qt-opencv

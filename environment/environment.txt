@@ -1,0 +1,15 @@
+#环境变量
+#environment
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/xny/shell:/home/xny/ARM-Linux/Tools/cross_compile/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf/bin:/home/xny/ARM-Linux/Tools/cross_compile/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf/lib:/home/xny/ARM-Linux/Tools/cross_compile/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf/include:/home/xny/ARM-Linux/Tools/cross_compile/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf/libexec:/home/xny/ARM-Linux/Tools/imx:"
+
+
+#bash.bashrc
+...
+...
+略
+#env-value
+export my_compile_path=/home/xny/ARM-Linux/Tools/cross_compile/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf/bin
+export LIBRARY_PATH=/home/xny/opencv/opencv/lib:/home/xny/Downloads/qt-everywhere-opensource-src-5.3.2/output/lib
+export CPLUS_INCLUDE_PATH=/home/xny/opencv/opencv/include:/home/xny/opencv/opencv/include/opencv2:/home/xny/opencv/opencv/include/opencv2/calib3d:/home/xny/opencv/opencv/include/opencv2/core:/home/xny/opencv/opencv/include/opencv2/dnn:/home/xny/opencv/opencv/include/opencv2/features2d:/home/xny/opencv/opencv/include/opencv2/flann:/home/xny/opencv/opencv/include/opencv2/gapi:/home/xny/opencv/opencv/include/opencv2/highgui:/home/xny/opencv/opencv/include/opencv2/ml:/home/xny/opencv/opencv/include/opencv2/objdetect:/home/xny/opencv/opencv/include/opencv2/photo:/home/xny/opencv/opencv/include/opencv2/stitching:/home/xny/opencv/opencv/include/opencv2/video:/home/xny/opencv/opencv/include/opencv2/videoio:/home/xny/Downloads/qt-everywhere-opensource-src-5.3.2/output/include
+export LIBRARY=/home/xny/opencv/opencv/lib:/home/xny/Downloads/qt-everywhere-opensource-src-5.3.2/output/lib
+

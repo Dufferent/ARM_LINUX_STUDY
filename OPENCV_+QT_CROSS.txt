@@ -1,0 +1,11 @@
+#OPENCV+QT界面支持
+->交叉编译QT库保证可用
+->sudo cmake-gui
+->选项和之前交叉编译OPENCV差不多
+->唯独::选择WITH_QT,去掉WITH_GTK
+->将第三方库和QT库复制到build目录下的lib文件夹中
+（不这么做会报错，因为rpath路径默认是这里，你的第三方库却不在这，可以随意进入一个CMakeFiles/xxx.dir/link.txt
+查看到-Wl,rpath,../build/lib当然会报连接错误）
+->把C_INDLUDE_PATH/CPLUS_INCLUDE_PATH/LD_LIBRARY_PATH/LIBRARY_PATH环境变量export空
+->sudo make
+->sudo make install

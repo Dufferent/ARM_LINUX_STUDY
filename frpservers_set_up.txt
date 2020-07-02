@@ -1,0 +1,48 @@
+################frp服务搭建###################
+1.github获取frp编译好的pack（也可以下载源码自己编译，但是GO写的，不太想编译）
+url:https://github.com/fatedier/frp
+2.有一台有公网ip的服务器（白嫖了aliyun的半个月）
+
+#下载好pack
+tar -vxf frp_0.33.0_linux_amd64.tar.gz
+cd frp_0.33.0_linux_amd64
+#配置frps.ini(这是服务端的配置文件)
+[common]
+bind_port = 7000
+bind_addr = 0.0.0.0
+privilege_token = 123456
+
+vhost_http_port = 8080
+vhost_https_port = 443
+#基本配置，后续可根据需要进阶
+
+#运行服务
+frps -c ./frps.ini * 若无法启动 输入ps -elf |grep frp 检测是否上次运行残留进程 占用了port*
+
+客户端
+#下载好pack
+tar -vxf frp_0.33.0_linux_amd64.tar.gz
+cd frp_0.33.0_linux_amd64
+#frpc.ini配置
+[common]
+server_addr = 121.196.26.230    #服务器ip
+server_port = 7000		#服务器对接端口
+privilege_token = 123456	#key
+
+login_fail_exit = false		#断线重连
+
+admin_addr = 127.0.0.1
+admin_port = 1935
+
+[ssh]
+type = tcp		 #协议类型	
+local_ip = 127.0.0.1	 #本地ip填私网ip也可
+local_port = 22	 #本地端口	
+remote_port = 6120   #映射到服务器的端口号
+#测试用的配置，根据需要自行修改
+
+#运行客户端
+frpc -c ./frpc.ini
+
+#详细教程见
+https://github.com/fatedier/frp/blob/master/README_zh.md#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B

@@ -1,0 +1,2 @@
+./configure --cross-prefix=arm-none-linux-gnueabi- --enable-cross-compile --target-os=linux --cc=arm-none-linux-gnueabi-gcc --arch=arm --prefix=/usr/local/ffmpeg --enable-shared --disable-static --enable-gpl --enable-nonfree --enable-ffmpeg --enable-pthreads --enable-yasm --enable-libx264 --extra-cflags=-I/usr/local/include --extra-ldflags=-L/usr/local/lib
+

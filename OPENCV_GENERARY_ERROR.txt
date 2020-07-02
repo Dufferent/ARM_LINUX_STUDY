@@ -1,0 +1,17 @@
+#报错
+(DEBUG) try_init_v4l2 VIDIOC_QUERYCAP "./test.mp4": Inappropriate ioctl for device
+Unable to stop the stream: Inappropriate ioctl for device
+
+(VIDEO_PLAYER:23034): GLib-GObject-CRITICAL **: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+film open failed!
+
+solve：
+sudo apt-get install ffmpeg sudo apt-get install libavcodec-dev libavformat-dev libavdevice-dev
+清空缓存重新编译
+重新编译
+
+#显示图片报错
+cmake选择GTK+2.0 和GTK
+并在UBUNTU下安装对应的图形库
+清空缓存重新编译
+重新编译
