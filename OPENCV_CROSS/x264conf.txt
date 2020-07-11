@@ -1,3 +1,4 @@
+export CC=arm-linux-gnueabihf-gcc
 ./configure --host=arm-linux-gnueabihf --prefix=/home/xny/ffm-ts/out/ --enable-shared --disable-asm
 make && make install
 
