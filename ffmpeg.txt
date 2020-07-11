@@ -1,8 +1,0 @@
-ffmpeg -f video4linux2 -i /dev/video0 -s 1024*800 -framerate 120 -f flv rtmp://192.168.0.102:1935/live/home
-/* 推流 */
-
-ffplay rtmp://192.168.0.102:1935/live/home
-/* 播放 */
-
-nginx.exe -c conf\nginx-win-rtmp.conf
-/* 流媒体服务 */
