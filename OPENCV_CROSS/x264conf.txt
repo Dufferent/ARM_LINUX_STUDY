@@ -1,2 +1,4 @@
 ./configure --host=arm-linux-gnueabihf --prefix=/home/xny/ffm-ts/out/ --enable-shared --disable-asm
 make && make install
+
+######*********在configure后看看config.mak里的CROSS_COMPILER***********#######
