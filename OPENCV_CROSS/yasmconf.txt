@@ -1,0 +1,6 @@
+#step1: export C_INCLUDE_PATH=
+#step2: export CPLUS_INCLUDE_PATH=
+#step3: export LD_LIBRARY_PATH=
+#step4: export LIBRARY_PATH=
+#step5: ./configure --host=arm-linux-gnueabihf --prefix=/home/xny/ffm-ts/out
+#step6: make && make install
