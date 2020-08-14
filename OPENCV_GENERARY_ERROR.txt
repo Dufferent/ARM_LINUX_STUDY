@@ -15,3 +15,6 @@ cmake选择GTK+2.0 和GTK
 并在UBUNTU下安装对应的图形库
 清空缓存重新编译
 重新编译
+
+#FFMPEG 或者 OPENCV 编译报错 链接动态库失败 要求加上-fPIC
+直接export CFLAGS=-fPIC即可
