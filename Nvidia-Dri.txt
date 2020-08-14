@@ -1,0 +1,15 @@
+#NVIDIA 驱动 for Linux Ubuntu
+#1.去NVIDIA官网下载对应型号的显卡驱动
+url：https://www.nvidia.in/content/DriverDownload-March2009/confirmation.php?url=/XFree86/Linux-x86_64/450.57/NVIDIA-Linux-x86_64-450.57.run&lang=in&type=TITAN
+
+（我这里是自己的显卡1650）
+#2.关闭现在的图形界面
+Alt+F1(切换到终端模式)
+sudo service lightdm stop(关闭图形界面)
+sudo su
+NVIDIA....run
+重启
+
+用nvidia-smi查看驱动是否安装成功
+
+
