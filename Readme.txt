@@ -1183,6 +1183,257 @@ mv <your shell> /etc/init.d/
 update-rc.d <your shell> defaults num(biger -> low)
 update-rc.d -f <your shell> remove 
 
+##################################################################
+qemu-for-arm 的基本使用
+
+[step1:]apt-get install qemu qemu-user-static
+[step2:]在官网获取linux内核，uboot源码，最小根文件系统
+[step3:]用交叉编译工具编译源码,内核得到对应板子的dtb和zImage,uboot得到u-boot 和 u-boot.bin 这些二进制可执行文件(ARM架构)
+[step4:]配置最小文件系统
+	(1) 两个脚本
+	-> mt.sh
+	#!/bin/bash
+	echo "MOUNTING"
+	sudo mount -t proc  /proc     /home/ts/Linux/nfs/proc
+	sudo mount -t sysfs /sys      /home/ts/Linux//nfs/sys
+	sudo mount -o bind  /dev      /home/ts/Linux/nfs/dev
+	sudo mount -o bind  /dev/pts  /home/ts/Linux/nfs/dev/pts
+	sudo chroot 	              /home/ts/Linux/nfs/
+	-> umt.sh
+	#!/bin/bash
+	echo "UNMOUNTING"
+	sudo umount /home/ts/Linux/nfs/proc
+	sudo umount /home/ts/Linux/nfs/sys
+	sudo umount /home/ts/Linux/nfs/dev/pts
+	sudo umount /home/ts/Linux/nfs/dev
+	(2) 把这两个脚本放在根文件目录下
+	(3) 之前我们安装了 qemu-user-static ,去到 /usr/bin/ 目录下 把 qemu-arm-static 复制到根文件系统的 /usr/bin 下
+	(4) 再配置一下apt工具的软件源 和 上网设置(DNS):
+	-> 将主机下的 /etc/reslove.conf 文件替换掉 最小文件系统下的 /etc/reslove.conf
+	-> 再在最小文件系统的 /etc/apt/resource.list 文件中添加下列开源站点其中的几个就行了:
+	#清华源
+	deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse
+	deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+	deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+	deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+	deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+	deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse
+	deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+	deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+	deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+	deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+	#阿里源
+	deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+	deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+	deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+	deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+	deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+	deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+	deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+	deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+	deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+	deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+	#中科大源
+	deb https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse
+	deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+	deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+	deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+	deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+	deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse
+	deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+	deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+	deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+	deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+	#163 源
+	deb http://mirrors.163.com/ubuntu/ bionic main restricted universe multiverse
+	deb http://mirrors.163.com/ubuntu/ bionic-security main restricted universe multiverse
+	deb http://mirrors.163.com/ubuntu/ bionic-updates main restricted universe multiverse
+	deb http://mirrors.163.com/ubuntu/ bionic-proposed main restricted universe multiverse
+	deb http://mirrors.163.com/ubuntu/ bionic-backports main restricted universe multiverse
+	deb-src http://mirrors.163.com/ubuntu/ bionic main restricted universe multiverse
+	deb-src http://mirrors.163.com/ubuntu/ bionic-security main restricted universe multiverse
+	deb-src http://mirrors.163.com/ubuntu/ bionic-updates main restricted universe multiverse
+	deb-src http://mirrors.163.com/ubuntu/ bionic-proposed main restricted universe multiverse
+	deb-src http://mirrors.163.com/ubuntu/ bionic-backports main restricted universe multiverse
+	(5) 挂载文件系统(ARM)，执行mt.sh即可
+	(6) 然后安装一些必要的工具，让Ubuntu文件系统能在开发板上正常启动即可:
+	apt update
+	apt install sudo
+	apt install vim
+	apt install kmod
+	apt install net-tools
+	apt install ethtool
+	apt install ifupdown
+	apt install language-pack-en-base
+	apt install rsyslog
+	apt install htop
+	apt install iputils-ping	
+	(7) passwd root && adduser yourname
+	(8) 主机配置 
+	echo "PC" > /etc/hostname
+	echo "127.0.0.1 localhost" >> /etc/hosts
+	echo "127.0.0.1 PC" >> /etc/hosts
+	(9) 设置串行终端
+	ln -s /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@ttymxc0.service
+	(不一定是 ttymxc0 可以查看内核目录下的 .config 获取默认输出的串口)
+	(10) exit && umt.sh
+[step5:]配置qemu的arm运行环境
+	(1) 先准备搭建网桥的工具 
+	apt-get install bridge-utils        # 虚拟网桥工具
+	apt-get install uml-utilities       # UML（User-mode linux）工具
+	(2) 修改网卡的配置文件 /etc/network/interface (注意：ens38 是另一张主机网卡，不是用来上网的闲置的网卡，虚拟机中可以直接添加虚拟网卡)
+	# interfaces(5) file used by ifup(8) and ifdown(8)
+	auto lo
+	iface lo inet loopback
+
+	auto ens33
+	iface ens33 inet static
+	address 192.168.0.105
+	netmask 255.255.255.0
+	gateway 192.168.0.1
+	dns-nameservers 114.114.114.114 192.168.0.1
+
+	#br0设置成静态ip方便自己调试，ip地址可以看下ens38自动获取时的网段，需要设置在同一网段，否则会无法使用
+
+	auto br0
+	iface br0 inet static
+	address 192.168.0.188
+	netmask 255.255.255.0
+	#iface br0 inet dhcp
+
+	bridge_ports ens38
+
+	# The tap0 network interface(s)
+
+	#供qemu的u-boot使用的server地址，这这里绑定到了br0上，所以需要设置为和br0同一网段的ip
+	auto tap0
+	iface tap0 inet manual
+	iface tap0 inet static
+	address 192.168.0.190
+	netmask 255.255.255.0
+	pre-up tunctl -t tap0 -u root    # 创建一个tap0接口，只允许root用户访问
+	pre-up ifconfig tap0 0.0.0.0 promisc up      # 打开tap0接口
+	post-up brctl addif br0 tap0    # 在虚拟网桥中增加一个tap0接口
+	(3) /etc/init.d/networking restart
+	(4) 配置完了的ifconfig 和 ip addr 信息
+ifconfig:
+	br0       Link encap:Ethernet  HWaddr 00:0c:29:b0:a2:95  
+          inet addr:192.168.0.188  Bcast:192.168.0.255  Mask:255.255.255.0
+          inet6 addr: fe80::20c:29ff:feb0:a295/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:89985 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:621 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:21322123 (21.3 MB)  TX bytes:75575 (75.5 KB)
+
+	...
+
+	ens38     Link encap:Ethernet  HWaddr 00:0c:29:b0:a2:95  
+		  UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+		  RX packets:370614 errors:0 dropped:0 overruns:0 frame:0
+		  TX packets:57772 errors:0 dropped:0 overruns:0 carrier:0
+		  collisions:0 txqueuelen:1000 
+		  RX bytes:292827583 (292.8 MB)  TX bytes:3682745 (3.6 MB)
+
+	...
+
+	tap0      Link encap:Ethernet  HWaddr 46:67:61:78:d1:6c  
+		  inet addr:192.168.0.190  Bcast:192.168.0.255  Mask:255.255.255.0
+		  inet6 addr: fe80::4467:61ff:fe78:d16c/64 Scope:Link
+		  UP BROADCAST PROMISC MULTICAST  MTU:1500  Metric:1
+		  RX packets:57151 errors:0 dropped:0 overruns:0 frame:0
+		  TX packets:113984 errors:0 dropped:0 overruns:0 carrier:0
+		  collisions:0 txqueuelen:1000 
+		  RX bytes:2859320 (2.8 MB)  TX bytes:99262267 (99.2 MB) 
+ip addr:
+	1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+	    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+	    inet 127.0.0.1/8 scope host lo
+	       valid_lft forever preferred_lft forever
+	    inet6 ::1/128 scope host 
+	       valid_lft forever preferred_lft forever
+	2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+	    link/ether 00:0c:29:b0:a2:8b brd ff:ff:ff:ff:ff:ff
+	    inet 192.168.0.105/24 brd 192.168.0.255 scope global ens33
+	       valid_lft forever preferred_lft forever
+	    inet6 fe80::20c:29ff:feb0:a28b/64 scope link 
+	       valid_lft forever preferred_lft forever
+	3: ens38: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master br0 state UP group default qlen 1000
+	    link/ether 00:0c:29:b0:a2:95 brd ff:ff:ff:ff:ff:ff
+	4: br0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+	    link/ether 00:0c:29:b0:a2:95 brd ff:ff:ff:ff:ff:ff
+	    inet 192.168.0.188/24 brd 192.168.0.255 scope global br0
+	       valid_lft forever preferred_lft forever
+	    inet6 fe80::20c:29ff:feb0:a295/64 scope link 
+	       valid_lft forever preferred_lft forever
+	5: tap0: <NO-CARRIER,BROADCAST,MULTICAST,PROMISC,UP> mtu 1500 qdisc pfifo_fast master br0 state DOWN group default qlen 1000
+	    link/ether 46:67:61:78:d1:6c brd ff:ff:ff:ff:ff:ff
+	    inet 192.168.0.190/24 brd 192.168.0.255 scope global tap0
+	       valid_lft forever preferred_lft forever
+	    inet6 fe80::4467:61ff:fe78:d16c/64 scope link 
+	       valid_lft forever preferred_lft forever
+[step6:]将根文件系统转化为ext4的img文件
+	dd if=/dev/zero of=./rootfs.img bs=<n>M count=N #disk-rom = bs*count	(给大一点，先给1024M吧)
+	mkfs.ext4 ./rootfs.img
+	mount -o loop ./rootfs.img /mnt/tmpfs/
+	sudo cp -raf <rootfs-dir> /mnt/tmpfs/
+	umount /mnt/tmpfs
+[step7:]配置uboot的环境变量(一劳永逸): <uboot>/include/configs/*.h (对应开发板的配置文件)
+	(范例)  ...
+		...
+	#define CONFIG_EXTRA_ENV_SETTINGS \
+			CONFIG_PLATFORM_ENV_SETTINGS \
+		        BOOTENV \
+			"console=ttyAMA0,38400n8\0" \
+			"dram=1024M\0" \
+			"root=/dev/sda1 rw\0" \
+			"mtd=armflash:1M@0x800000(uboot),7M@0x1000000(kernel)," \
+				"24M@0x2000000(initrd)\0" \
+			"flashargs=setenv bootargs root=${root} console=${console} " \
+				"mem=${dram} mtdparts=${mtd} mmci.fmax=190000 " \
+				"devtmpfs.mount=0  vmalloc=256M\0" \
+			"bootflash=run flashargs; " \
+				"cp ${ramdisk_addr} ${ramdisk_addr_r} ${maxramdisk}; " \
+				"bootm ${kernel_addr} ${ramdisk_addr_r}\0" \
+			"bootargs=console=ttyAMA0,38400 root=/dev/mmcblk0 rw earlycon ignore_loglevel rootfstype=ext4\0" \
+			"myboot=tftpboot 60003000 zImage; tftpboot 60500000 vexpress-v2p-ca9.dtb; bootz 60003000 - 60500000;\0" \
+			"nfsargs=setenv bootargs console=ttyAMA0,38400 root=/dev/nfs rw nfsroot=192.168.0.105:/home/ts/Linux/nfs,proto=tcp,nfsvers=3,nolock 		ip=192.168.0.189:192.168.0.105:192.168.0.1:255.255.255.0\0"
+		...
+		...
+		/* net config && server ip config */
+		#define CONFIG_IPADDR 192.168.0.189
+		#define CONFIG_NETMASK 255.255.255.0
+		#define CONFIG_GATEWAYIP 192.168.0.1
+		#define CONFIG_SERVERIP 192.168.0.105
+[step8:]编写对应的脚本启动ARM虚拟机: (参考脚本)
+	#!/bin/bash
+	sudo qemu-system-arm -M vexpress-a9 -m 128 -kernel uboot/u-boot -net nic -net tap,ifname=tap0,script=no,downscript=no -nographic -sd fs/rootfs.img
+#################################################################################################################################
+
+
+	
+			
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
