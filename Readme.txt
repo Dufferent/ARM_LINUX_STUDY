@@ -731,6 +731,149 @@ vscode的目录简化脚本
         "arch/arm/boot/dts/*.tmp":true,
     }
 }
+设备树中的LCD节点
+&lcdif {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_lcdif_dat
+		     &pinctrl_lcdif_ctrl
+		     &pinctrl_lcdif_reset>;
+	display = <&display0>;
+	status = "okay";
+
+	display0: display {
+		bits-per-pixel = <16>;
+		bus-width = <24>;
+
+		display-timings {
+			native-mode = <&timing0>;
+			timing0: timing0 {
+			clock-frequency = <51000000>;
+			hactive = <1024>;
+			vactive = <600>;
+			hfront-porch = <160>;
+			hback-porch = <140>;
+			hsync-len = <20>;
+			vback-porch = <20>;
+			vfront-porch = <12>;
+			vsync-len = <3>;
+
+			hsync-active = <0>;
+			vsync-active = <0>;
+			de-active = <1>;
+			pixelclk-active = <0>;
+			};
+		};
+	};
+};
+
+pinctrl_lcdif_dat: lcdifdatgrp {
+			fsl,pins = <
+				MX6UL_PAD_LCD_DATA00__LCDIF_DATA00  0x49	//原本电器属性是0x79但影响以太网卡的驱动,全部改为0x49
+				MX6UL_PAD_LCD_DATA01__LCDIF_DATA01  0x49
+				MX6UL_PAD_LCD_DATA02__LCDIF_DATA02  0x49
+				MX6UL_PAD_LCD_DATA03__LCDIF_DATA03  0x49
+				MX6UL_PAD_LCD_DATA04__LCDIF_DATA04  0x49
+				MX6UL_PAD_LCD_DATA05__LCDIF_DATA05  0x49
+				MX6UL_PAD_LCD_DATA06__LCDIF_DATA06  0x49
+				MX6UL_PAD_LCD_DATA07__LCDIF_DATA07  0x49
+				MX6UL_PAD_LCD_DATA08__LCDIF_DATA08  0x49
+				MX6UL_PAD_LCD_DATA09__LCDIF_DATA09  0x49
+				MX6UL_PAD_LCD_DATA10__LCDIF_DATA10  0x49
+				MX6UL_PAD_LCD_DATA11__LCDIF_DATA11  0x49
+				MX6UL_PAD_LCD_DATA12__LCDIF_DATA12  0x49
+				MX6UL_PAD_LCD_DATA13__LCDIF_DATA13  0x49
+				MX6UL_PAD_LCD_DATA14__LCDIF_DATA14  0x49
+				MX6UL_PAD_LCD_DATA15__LCDIF_DATA15  0x49
+				MX6UL_PAD_LCD_DATA16__LCDIF_DATA16  0x49
+				MX6UL_PAD_LCD_DATA17__LCDIF_DATA17  0x49
+				MX6UL_PAD_LCD_DATA18__LCDIF_DATA18  0x49
+				MX6UL_PAD_LCD_DATA19__LCDIF_DATA19  0x49
+				MX6UL_PAD_LCD_DATA20__LCDIF_DATA20  0x49
+				MX6UL_PAD_LCD_DATA21__LCDIF_DATA21  0x49
+				MX6UL_PAD_LCD_DATA22__LCDIF_DATA22  0x49
+				MX6UL_PAD_LCD_DATA23__LCDIF_DATA23  0x49
+			>;
+		};
+		pinctrl_lcdif_ctrl: lcdifctrlgrp {
+			fsl,pins = <
+				MX6UL_PAD_LCD_CLK__LCDIF_CLK	    0x49
+				MX6UL_PAD_LCD_ENABLE__LCDIF_ENABLE  0x49
+				MX6UL_PAD_LCD_HSYNC__LCDIF_HSYNC    0x49
+				MX6UL_PAD_LCD_VSYNC__LCDIF_VSYNC    0x49
+			>;
+		};
+设备树中的网卡节点
+&fec1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_enet1>;
+	phy-mode = "rmii";
+	phy-handle = <&ethphy0>;
+	phy-reset-gpios = <&gpio5 7 GPIO_ACTIVE_LOW>;
+	phy-reset-duration = <200>;
+	status = "okay";
+};
+
+&fec2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_enet2>;
+	phy-mode = "rmii";
+	phy-handle = <&ethphy1>;
+	phy-reset-gpios = <&gpio5 7 GPIO_ACTIVE_LOW>;
+	phy-reset-duration = <200>;
+	status = "okay";
+
+	mdio {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		ethphy0: ethernet-phy@0 {
+			compatible = "ethernet-phy-ieee802.3-c22";
+			reg = <0>;
+		};
+
+		ethphy1: ethernet-phy@1 {
+			compatible = "ethernet-phy-ieee802.3-c22";
+			reg = <1>;
+		};
+	};
+};
+
+pinctrl_enet1: enet1grp {
+			fsl,pins = <
+				MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN	0x1b0b0
+				MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER	0x1b0b0
+				/*
+				MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00	0x1b0b0
+				MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01	0x1b0b0
+				MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN	0x1b0b0
+				MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00	0x1b0b0
+				MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01	0x1b0b0
+				*/
+				/*MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1	0x4001b031*/
+				MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1	0x4001b009
+				MX6ULL_PAD_SNVS_TAMPER7__GPIO5_IO07 0x10b0
+			>;
+		};
+
+		pinctrl_enet2: enet2grp {
+			fsl,pins = <
+				MX6UL_PAD_GPIO1_IO07__ENET2_MDC		0x1b0b0
+				MX6UL_PAD_GPIO1_IO06__ENET2_MDIO	0x1b0b0
+				/*
+				MX6UL_PAD_ENET2_RX_EN__ENET2_RX_EN	0x1b0b0
+				MX6UL_PAD_ENET2_RX_ER__ENET2_RX_ER	0x1b0b0
+				MX6UL_PAD_ENET2_RX_DATA0__ENET2_RDATA00	0x1b0b0
+				MX6UL_PAD_ENET2_RX_DATA1__ENET2_RDATA01	0x1b0b0
+				MX6UL_PAD_ENET2_TX_EN__ENET2_TX_EN	0x1b0b0
+				MX6UL_PAD_ENET2_TX_DATA0__ENET2_TDATA00	0x1b0b0
+				MX6UL_PAD_ENET2_TX_DATA1__ENET2_TDATA01	0x1b0b0
+				*/
+				/*MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2	0x4001b031*/
+				MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2	0x4001b009
+				MX6ULL_PAD_SNVS_TAMPER8__GPIO5_IO08 0x10b0
+			>;
+		};
+(注：需要在设备树里把网卡IO相关的其他节点的引用注释掉)
 #定制自己的跟文件系统
 ->安装工具qemu
 sudo apt-get install qemu-user-static
