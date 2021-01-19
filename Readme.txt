@@ -874,6 +874,56 @@ pinctrl_enet1: enet1grp {
 			>;
 		};
 (注：需要在设备树里把网卡IO相关的其他节点的引用注释掉)
+触摸屏幕的节点
+&i2c2 {
+	clock_frequency = <100000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_i2c2>;
+	status = "okay";
+
+	codec: wm8960@1a {
+		compatible = "wlf,wm8960";
+		......
+	};
+
+	ov5640: ov5640@3c {
+		......
+	};
+	/* 增加的ft5426节点 */
+	ft5426: ft5426@38 {
+		compatible = "edt,edt-ft5206","edt,edt-ft5406","edt,edt-ft5306";
+		pinctrl-names = "default";
+		pinctrl-0 = <&ts_int_pin &ts_reset_pin>;
+		reg=<0x38>;
+		interrupt-parent=<&gpio1>;
+		interrupts = <9 0>;
+		reset-gpios = <&gpio5 9 GPIO_ACTIVE_LOW>;	//屏蔽相关的IO引用
+		irq-gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;		//屏蔽相关的IO引用
+		status = "okay";
+	};
+};
+新增的pinctrl：
+		ts_int_pin: ts_int_pin_mux {
+		fsl,pins = <
+			MX6UL_PAD_GPIO1_IO09__GPIO1_IO09 0x49	//屏蔽相关的IO引用
+			>;
+		};
+		ts_reset_pin: ts_reset_pin_mux {
+		fsl,pins = <
+			MX6ULL_PAD_SNVS_TAMPER9__GPIO5_IO09 0x49 //屏蔽相关的IO引用
+			>;
+		};
+（原理图中可以清楚看出TFT触摸用到了i2c2的SDA和SCL以及GPIO1_IO09和GPIO5_IO09）
+&tsc {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_tsc>;
+	xnur-gpio = <&gpio1 3 GPIO_ACTIVE_LOW>;
+	measure-delay-time = <0xffff>;
+	pre-charge-time = <0xfff>;
+	status = "disabled";	//失能该设备
+};
+修改后的edt-ft5x06设备驱动文件edt-ft5x06.c:(放在同级目录下)
+
 #定制自己的跟文件系统
 ->安装工具qemu
 sudo apt-get install qemu-user-static
