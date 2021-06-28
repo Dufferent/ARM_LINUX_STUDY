@@ -1602,7 +1602,18 @@ ip addr:
 	#!/bin/bash
 	sudo qemu-system-arm -M vexpress-a9 -m 128 -kernel uboot/u-boot -net nic -net tap,ifname=tap0,script=no,downscript=no -nographic -sd fs/rootfs.img
 #################################################################################################################################
+############## 物理机 Ubuntu16.04 基于 VMware 的 Ubuntu16.04 搭建 供qemu arm 使用的虚拟网络拓扑方法《二》:
+brctl addbr br0 # 创建网桥
+tunctl -t tap0 -u root # 创建qemu使用的虚拟网卡
+brctl addif br0 tap0 # 链接br0和tap0
+ip link set br0 up # 使能网桥
+ip link set tap0 up # 使能虚拟网卡
+ifconfig br0 192.168.xxx.1/24 # br0 作为 tap0 的网关
+echo "1" > /proc/sys/net/ipv4/ip_forward # 打开VMware下Ubuntu 的 ipv4数据转发
+iptables -t nat -A POSTROUTING -o ens33 -j MASQUERADE # 配置端口规则
 
+qemu 中的 virtual machine 的 ip 设置为和 br0 同一个网段即可 网关设置为 br0 的 ip
+#################################################################################################################################
 
 	
 			
