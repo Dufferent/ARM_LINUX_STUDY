@@ -1,0 +1,10 @@
+############## OPENCV FOR WIN ###################
+<1> COMPILE FROM OPENCV SOURCE
+	-> OpenCV  3 . 4 . 12
+	-> tdm-gcc 9 . 2 .  0 ++
+<2> fix ffmpeg dev
+	-> 在configure的文件头部加上代理设置 set(http_proxy/https_proxy "ip:port")
+	-> 或者查看log信息下载对应的ffmpeg文件放在build/3rdpart/ffmpeg下
+<3> fix OpenCV conflict with Tdm-gcc
+	-> Source目录下的modules/highgui/win32_app.cpp 里的 strcpy_s 和 strcat_s 函数为Win下特有
+改为strcpy 和 strcat即可
